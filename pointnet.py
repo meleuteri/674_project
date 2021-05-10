@@ -55,49 +55,49 @@ def minkowski_collate_fn(list_data):
     }
 
 
-def stack_collate_fn(list_data):
-    coordinates_batch, features_batch, labels_batch = (
-        torch.stack([d["coordinates"] for d in list_data]),
-        torch.stack([d["features"] for d in list_data]),
-        torch.cat([d["label"] for d in list_data]),
-    )
+# def stack_collate_fn(list_data):
+#     coordinates_batch, features_batch, labels_batch = (
+#         torch.stack([d["coordinates"] for d in list_data]),
+#         torch.stack([d["features"] for d in list_data]),
+#         torch.cat([d["label"] for d in list_data]),
+#     )
 
-    return {
-        "coordinates": coordinates_batch,
-        "features": features_batch,
-        "labels": labels_batch,
-    }
+#     return {
+#         "coordinates": coordinates_batch,
+#         "features": features_batch,
+#         "labels": labels_batch,
+#     }
 
 
-class PointNet(nn.Module):
-    def __init__(self, in_channel, out_channel, embedding_channel=1024):
-        super(PointNet, self).__init__()
-        self.conv1 = nn.Conv1d(3, 64, kernel_size=1, bias=False)
-        self.conv2 = nn.Conv1d(64, 64, kernel_size=1, bias=False)
-        self.conv3 = nn.Conv1d(64, 64, kernel_size=1, bias=False)
-        self.conv4 = nn.Conv1d(64, 128, kernel_size=1, bias=False)
-        self.conv5 = nn.Conv1d(128, embedding_channel, kernel_size=1, bias=False)
-        self.bn1 = nn.BatchNorm1d(64)
-        self.bn2 = nn.BatchNorm1d(64)
-        self.bn3 = nn.BatchNorm1d(64)
-        self.bn4 = nn.BatchNorm1d(128)
-        self.bn5 = nn.BatchNorm1d(embedding_channel)
-        self.linear1 = nn.Linear(embedding_channel, 512, bias=False)
-        self.bn6 = nn.BatchNorm1d(512)
-        self.dp1 = nn.Dropout()
-        self.linear2 = nn.Linear(512, out_channel, bias=True)
+# class PointNet(nn.Module):
+#     def __init__(self, in_channel, out_channel, embedding_channel=1024):
+#         super(PointNet, self).__init__()
+#         self.conv1 = nn.Conv1d(3, 64, kernel_size=1, bias=False)
+#         self.conv2 = nn.Conv1d(64, 64, kernel_size=1, bias=False)
+#         self.conv3 = nn.Conv1d(64, 64, kernel_size=1, bias=False)
+#         self.conv4 = nn.Conv1d(64, 128, kernel_size=1, bias=False)
+#         self.conv5 = nn.Conv1d(128, embedding_channel, kernel_size=1, bias=False)
+#         self.bn1 = nn.BatchNorm1d(64)
+#         self.bn2 = nn.BatchNorm1d(64)
+#         self.bn3 = nn.BatchNorm1d(64)
+#         self.bn4 = nn.BatchNorm1d(128)
+#         self.bn5 = nn.BatchNorm1d(embedding_channel)
+#         self.linear1 = nn.Linear(embedding_channel, 512, bias=False)
+#         self.bn6 = nn.BatchNorm1d(512)
+#         self.dp1 = nn.Dropout()
+#         self.linear2 = nn.Linear(512, out_channel, bias=True)
 
-    def forward(self, x: torch.Tensor):
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = F.relu(self.bn2(self.conv2(x)))
-        x = F.relu(self.bn3(self.conv3(x)))
-        x = F.relu(self.bn4(self.conv4(x)))
-        x = F.relu(self.bn5(self.conv5(x)))
-        x = F.adaptive_max_pool1d(x, 1).squeeze()
-        x = F.relu(self.bn6(self.linear1(x)))
-        x = self.dp1(x)
-        x = self.linear2(x)
-        return x
+#     def forward(self, x: torch.Tensor):
+#         x = F.relu(self.bn1(self.conv1(x)))
+#         x = F.relu(self.bn2(self.conv2(x)))
+#         x = F.relu(self.bn3(self.conv3(x)))
+#         x = F.relu(self.bn4(self.conv4(x)))
+#         x = F.relu(self.bn5(self.conv5(x)))
+#         x = F.adaptive_max_pool1d(x, 1).squeeze()
+#         x = F.relu(self.bn6(self.linear1(x)))
+#         x = self.dp1(x)
+#         x = self.linear2(x)
+#         return x
 
 
 # MinkowskiNet implementation of a pointnet.
@@ -155,30 +155,30 @@ class MinkowskiPointNet(ME.MinkowskiNetwork):
         return self.linear2(x).F
 
 
-class CoordinateTransformation:
-    def __init__(self, scale_range=(0.9, 1.1), trans=0.25, jitter=0.025, clip=0.05):
-        self.scale_range = scale_range
-        self.trans = trans
-        self.jitter = jitter
-        self.clip = clip
+# class CoordinateTransformation:
+#     def __init__(self, scale_range=(0.9, 1.1), trans=0.25, jitter=0.025, clip=0.05):
+#         self.scale_range = scale_range
+#         self.trans = trans
+#         self.jitter = jitter
+#         self.clip = clip
 
-    def __call__(self, coords):
-        if random.random() < 0.9:
-            coords *= np.random.uniform(
-                low=self.scale_range[0], high=self.scale_range[1], size=[1, 3]
-            )
-        if random.random() < 0.9:
-            coords += np.random.uniform(low=-self.trans, high=self.trans, size=[1, 3])
-        if random.random() < 0.7:
-            coords += np.clip(
-                self.jitter * (np.random.rand(len(coords), 3) - 0.5),
-                -self.clip,
-                self.clip,
-            )
-        return coords
+#     def __call__(self, coords):
+#         if random.random() < 0.9:
+#             coords *= np.random.uniform(
+#                 low=self.scale_range[0], high=self.scale_range[1], size=[1, 3]
+#             )
+#         if random.random() < 0.9:
+#             coords += np.random.uniform(low=-self.trans, high=self.trans, size=[1, 3])
+#         if random.random() < 0.7:
+#             coords += np.clip(
+#                 self.jitter * (np.random.rand(len(coords), 3) - 0.5),
+#                 -self.clip,
+#                 self.clip,
+#             )
+#         return coords
 
-    def __repr__(self):
-        return f"Transformation(scale={self.scale_range}, translation={self.trans}, jitter={self.jitter})"
+#     def __repr__(self):
+#         return f"Transformation(scale={self.scale_range}, translation={self.trans}, jitter={self.jitter})"
 
 
 def download_modelnet40_dataset():
@@ -250,9 +250,9 @@ class ModelNet40H5(Dataset):
 if __name__ == "__main__":
     dataset = ModelNet40H5(phase="train", data_root="modelnet40_ply_hdf5_2048")
     # Use stack_collate_fn for pointnet
-    pointnet_data_loader = DataLoader(
-        dataset, num_workers=4, collate_fn=stack_collate_fn, batch_size=16,
-    )
+    # pointnet_data_loader = DataLoader(
+    #     dataset, num_workers=4, collate_fn=stack_collate_fn, batch_size=16,
+    # )
 
     # Use minkowski_collate_fn for pointnet
     minknet_data_loader = DataLoader(
@@ -260,23 +260,24 @@ if __name__ == "__main__":
     )
 
     # Network
-    pointnet = PointNet(in_channel=3, out_channel=20, embedding_channel=1024)
+    # pointnet = PointNet(in_channel=3, out_channel=20, embedding_channel=1024)
     minkpointnet = MinkowskiPointNet(
         in_channel=3, out_channel=20, embedding_channel=1024, dimension=3
     )
 
-    for i, (pointnet_batch, minknet_batch) in enumerate(
-        zip(pointnet_data_loader, minknet_data_loader)
-    ):
+    for i, minknet_batch in enumerate(minknet_data_loader):
         # PointNet.
         # WARNING: PointNet inputs must have the same number of points.
-        pointnet_input = pointnet_batch["coordinates"].permute(0, 2, 1)
-        pred = pointnet(pointnet_input)
+        # pointnet_input = pointnet_batch["coordinates"].permute(0, 2, 1)
+        # pred = pointnet(pointnet_input)
 
         # MinkNet
         # Unlike pointnet, number of points for each point cloud do not need to be the same.
-        minknet_input = ME.TensorField(
-            coordinates=minknet_batch["coordinates"], features=minknet_batch["features"]
-        )
+        minknet_input = ME.TensorField(coordinates=minknet_batch["coordinates"], features=minknet_batch["features"])
         minkpointnet(minknet_input)
         print(f"Processed batch {i}")
+
+
+    torch.save(minkpointnet.state_dict(), 'saved_state_dict/')
+
+
