@@ -11,8 +11,7 @@ file MakeData.py turns the data from the unzipped folder of .txt files into a li
 Contributions:
 
 Matthew Eleuteri:
-All of MakeData.py
-train.py lines 39-61
+All of MakeData.py, and train.py lines 39-61
 
 Jerry Fu:
 All of downloader.py
