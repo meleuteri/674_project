@@ -12,7 +12,7 @@ Contributions:
 
 Matthew Eleuteri:
 All of MakeData.py
-train.py lines 
+train.py lines 39-61
 
 Jerry Fu:
 All of downloader.py
