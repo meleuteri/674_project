@@ -8,7 +8,8 @@ class MakeData(torch.utils.data.Dataset):
         self.scenes = []
         for filename in os.listdir(root_dir):
             if filename.endswith(".txt"):
-                self.scenes.append(root_dir + filename)
+#                 print(root_dir + "/" + filename)
+                self.scenes.append(root_dir + "/" + filename)
 
     def __getitem__(self, idx):
         scene_name = self.scenes[idx]

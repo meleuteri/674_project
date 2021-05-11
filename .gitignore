@@ -4,3 +4,4 @@ dales_ply/*
 dales_las/*
 zips/*
 .ipynb_checkpoints/*
+__pycache__/*
