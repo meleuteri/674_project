@@ -2,9 +2,8 @@
 project for cs674
 
 
-# Get Started
 
-requirements:
+# Requirements
 
 Ubuntu >= 14.04
 
@@ -15,6 +14,9 @@ pytorch >= 1.7 (pytorch 1.8.1 + CUDA 11.X is unstable)
 python >= 3.6
 
 GCC >= 7.4.0
+
+
+# Getting started
 
 Use the command "python downloader.py -a --cleanup=True" to download and unzip all the data files into their required locations for the rest of the code
 
