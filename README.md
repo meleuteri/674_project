@@ -24,7 +24,7 @@ file MakeData.py turns the data from the unzipped folder of .txt files into a li
 
 file train.py tries to build a model and save its weights
 
-Contributions:
+# Contributions:
 
 Matthew Eleuteri:
 All of MakeData.py, and train.py lines 39-61
@@ -33,3 +33,4 @@ Jerry Fu:
 All of downloader.py
 
 Sharon Shao:
+visualization of point cloud
